@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# vitepress cache
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+
+# logs
+*.log
+
+# macOS
+.DS_Store
+
+# vscode
+.vscode/
+
+# idea
+.idea/
+
+# env
+.env
+.env.*
+
+# temporary files
+*.local
