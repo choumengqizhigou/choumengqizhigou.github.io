@@ -1,4 +1,7 @@
 <script setup lang="ts">
+//导入头像资源
+import avatar_jpg from './images/avatar.jpg'
+
 const categories = [
   {
     name: '萌新报道',
@@ -88,7 +91,7 @@ const profile = {
   name: '丑萌气质狗',
   title: '个人博客 / 学习记录',
   description:
-    '这里会慢慢整理技术笔记、项目复盘、游戏开发练习和一些零散想法。先把路标搭起来，再一点点把内容补满。',
+    '博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上述方式联系，非常感谢！',
   stats: [
     { label: '分类', value: categories.length },
     {
@@ -103,33 +106,25 @@ const profile = {
 <template>
   <main class="home-page">
     <section class="series-area" aria-label="文章类别和系列">
-      <div class="home-heading">
+      <!-- <div class="home-heading">
         <p class="eyebrow">BLOG ROADMAP</p>
         <h1>文章分类与系列进度</h1>
         <p>把学习、实践和复盘拆成可以持续推进的主题，每个系列都留一个清晰的进度位置。</p>
-      </div>
+      </div> -->
 
       <div class="category-list">
-        <section
-          v-for="category in categories"
-          :key="category.name"
-          class="category-block"
-          :style="{ '--category-color': category.color }"
-        >
+        <section v-for="category in categories" :key="category.name" class="category-block"
+          :style="{ '--category-color': category.color }">
           <div class="category-header">
             <div class="category-title">
-              <span class="category-mark" aria-hidden="true"></span>
+              <!-- <span class="category-mark" aria-hidden="true"></span> -->
               <h2>{{ category.name }}</h2>
             </div>
             <span class="series-count">{{ category.series.length }} 个系列</span>
           </div>
 
           <div class="series-grid">
-            <article
-              v-for="item in category.series"
-              :key="item.title"
-              class="series-card"
-            >
+            <article v-for="item in category.series" :key="item.title" class="series-card">
               <div class="series-card-header">
                 <h3>{{ item.title }}</h3>
                 <span>{{ item.progress }}%</span>
@@ -145,21 +140,21 @@ const profile = {
     </section>
 
     <aside class="profile-panel" aria-label="个人信息">
-      <div class="avatar" aria-hidden="true">
+      <!-- <div class="avatar" aria-hidden="true">
         <span>丑萌</span>
+      </div> -->
+      <div>
+        <img class="avatar" :src="avatar_jpg" alt="头像" />
       </div>
       <div class="profile-copy">
-        <p class="profile-kicker">ABOUT ME</p>
-        <h2>{{ profile.name }}</h2>
-        <p class="profile-title">{{ profile.title }}</p>
         <p class="profile-description">{{ profile.description }}</p>
       </div>
-      <dl class="profile-stats">
+      <!-- <dl class="profile-stats">
         <div v-for="item in profile.stats" :key="item.label">
           <dt>{{ item.label }}</dt>
           <dd>{{ item.value }}</dd>
         </div>
-      </dl>
+      </dl> -->
     </aside>
   </main>
 </template>
@@ -246,7 +241,8 @@ const profile = {
   overflow-wrap: anywhere;
   margin: 0;
   color: var(--category-color);
-  font-size: 22px;
+  font-size: 28px;
+  font-weight: bold;
   line-height: 1.35;
   letter-spacing: 0;
 }
@@ -274,11 +270,9 @@ const profile = {
   border-top: 4px solid var(--category-color);
   border-radius: 8px;
   background:
-    linear-gradient(
-      180deg,
+    linear-gradient(180deg,
       color-mix(in srgb, var(--category-color) 10%, transparent),
-      transparent 54px
-    ),
+      transparent 54px),
     var(--vp-c-bg-soft);
 }
 
@@ -332,26 +326,26 @@ const profile = {
   top: 88px;
   align-self: start;
   padding: 24px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  background: var(--vp-c-bg-soft);
+  /* border: 1px solid var(--vp-c-divider);
+  border-radius: 8px; */
+  /* background: var(--vp-c-bg-soft); */
 }
 
 .avatar {
   display: grid;
-  width: 132px;
-  height: 132px;
-  margin: 0 auto 22px;
-  place-items: center;
-  border: 4px solid var(--vp-c-bg);
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+  /* place-items: center;
+  border: 4px solid var(--vp-c-bg); */
   border-radius: 50%;
-  background:
+  /* background:
     radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.72), transparent 0 18%, transparent 19%),
-    conic-gradient(from 145deg, #409eff, #67c23a, #ffc90c, #f56c6c, #6b4eaa, #409eff);
-  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.13);
+    conic-gradient(from 145deg, #409eff, #67c23a, #ffc90c, #f56c6c, #6b4eaa, #409eff); */
+  /* box-shadow: 0 16px 34px rgba(0, 0, 0, 0.13); */
 }
 
-.avatar span {
+/* .avatar span {
   display: grid;
   width: 82px;
   height: 82px;
@@ -362,7 +356,7 @@ const profile = {
   font-size: 20px;
   font-weight: 800;
   letter-spacing: 0;
-}
+} */
 
 .profile-copy {
   text-align: center;

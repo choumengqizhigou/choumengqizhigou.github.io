@@ -2,9 +2,13 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "丑萌气质狗的个人博客",
+  title: "丑萌气质狗",
   description: "简单描述一下博客信息，后面还要进行修改的！",
   themeConfig: {
+    head: [
+      ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ],
+
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
@@ -22,7 +26,12 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
-    ]
+      { icon: 'github', link: 'https://github.com/choumengqizhigou' }
+    ],
+
+    footer: {
+      message: 'Released under the MIT License.',
+      copyright: 'Copyright © 2019-present Evan You'
+    }
   }
 })
