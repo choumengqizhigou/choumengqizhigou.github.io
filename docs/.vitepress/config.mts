@@ -4,11 +4,10 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "丑萌气质狗",
   description: "简单描述一下博客信息，后面还要进行修改的！",
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }]
+  ],
   themeConfig: {
-    head: [
-      ['link', { rel: 'icon', href: '/favicon.ico' }]
-    ],
-
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
