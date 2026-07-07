@@ -1,7 +1,11 @@
 <script setup lang="ts">
-//导入头像资源
-import avatar_jpg from './images/avatar.jpg'
-import { data as categories } from '../data/categories.data'
+import type { Category } from '../data/articles-loader.mts'
+
+const props = withDefaults(defineProps<{
+  articles?: Category[]
+}>(), {
+  articles: () => []
+})
 
 const profile = {
   name: '丑萌气质狗',
@@ -9,10 +13,10 @@ const profile = {
   description:
     '博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上述方式联系，非常感谢！',
   stats: [
-    { label: '分类', value: categories.length },
+    { label: '分类', value: props.articles.length },
     {
       label: '系列',
-      value: categories.reduce((total, category) => total + category.series.length, 0)
+      value: props.articles.reduce((total, category) => total + category.series.length, 0)
     },
     { label: '状态', value: '更新中' }
   ]
@@ -29,7 +33,7 @@ const profile = {
       </div> -->
 
       <div class="category-list">
-        <section v-for="category in categories" :key="category.name" class="category-block"
+        <section v-for="category in props.articles" :key="category.name" class="category-block"
           :style="{ '--category-color': category.color }">
           <div class="category-header">
             <div class="category-title">
@@ -41,14 +45,12 @@ const profile = {
 
           <div class="series-grid">
             <a v-for="item in category.series" :key="item.title" class="series-card" :href="item.url">
-              <div class="series-card-header">
-                <h3>{{ item.title }}</h3>
-                <span>{{ item.progress }}%</span>
+              <div class="series-card-title">
+                <h3 :title="item.title">{{ item.title }}</h3>
               </div>
-              <p>{{ item.summary }}</p>
-              <p class="article-count">{{ item.articles.length }} 篇文章</p>
-              <div class="progress-track" :aria-label="`${item.title} 进度 ${item.progress}%`">
-                <span :style="{ width: `${item.progress}%` }"></span>
+              <div class="series-card-body">
+                <p class="series-summary" :title="item.summary">{{ item.summary }}</p>
+                <p class="article-count">{{ item.articles.length }} 篇文章</p>
               </div>
             </a>
           </div>
@@ -61,10 +63,11 @@ const profile = {
         <span>丑萌</span>
       </div> -->
       <div>
-        <img class="avatar" :src="avatar_jpg" alt="头像" />
+        <img class="avatar" src="/avatar.jpg" alt="头像" />
       </div>
       <div class="profile-copy">
-        <p class="profile-description">{{ profile.description }}</p>
+        <p class="profile-description">博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上述方式联系，非常感谢！</p>
+        <!-- <p class="profile-description">{{ profile.description }}</p> -->
       </div>
       <!-- <dl class="profile-stats">
         <div v-for="item in profile.stats" :key="item.label">
@@ -178,19 +181,13 @@ const profile = {
 
 .series-card {
   display: flex;
-  min-height: 172px;
+  height: 188px;
   min-width: 0;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
+  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--category-color) 28%, var(--vp-c-divider));
-  border-top: 4px solid var(--category-color);
   border-radius: 8px;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--category-color) 10%, transparent),
-      transparent 54px),
-    var(--vp-c-bg-soft);
+  background: #fff;
   color: inherit;
   text-decoration: none;
   transition:
@@ -204,56 +201,64 @@ const profile = {
   transform: translateY(-2px);
 }
 
-.series-card-header {
+.series-card-title {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  height: 108px;
+  flex: 0 0 108px;
+  padding: 16px 10px;
+  background: var(--category-color);
+  text-align: center;
 }
 
 .series-card h3 {
-  overflow-wrap: anywhere;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   margin: 0;
-  color: var(--vp-c-text-1);
-  font-size: 16px;
-  line-height: 1.45;
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.4;
   letter-spacing: 0;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
-.series-card-header span {
+.series-card-body {
+  display: flex;
+  height: 80px;
+  flex: 0 0 80px;
+  flex-direction: column;
+  gap: 5px;
+  padding: 5px 10px;
+  background: #fff;
+}
+
+.series-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   flex: 0 0 auto;
-  color: var(--category-color);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.series-card p {
-  overflow-wrap: anywhere;
-  margin: 12px 0 18px;
+  margin: 0;
   color: var(--vp-c-text-2);
   font-size: 13px;
   line-height: 1.7;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .series-card .article-count {
-  margin: auto 0 12px;
+  display: block;
+  flex: 0 0 auto;
+  overflow: visible;
+  margin: 0;
   color: var(--category-color);
   font-size: 12px;
   font-weight: 700;
-}
-
-.progress-track {
-  overflow: hidden;
-  height: 8px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--category-color) 16%, var(--vp-c-bg));
-}
-
-.progress-track span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--category-color);
+  line-height: 1.5;
 }
 
 .profile-panel {
