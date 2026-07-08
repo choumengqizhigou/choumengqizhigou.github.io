@@ -84,6 +84,24 @@ function toArticleImageUrl(src: string) {
   return `${articleImageBaseUrl}/${imagePath}`
 }
 
+function toArticleFileUrl(href: string) {
+  const trimmedHref = href.trim()
+
+  if (!trimmedHref || trimmedHref.startsWith('#') || trimmedHref.startsWith(articleImageBaseUrl)) {
+    return href
+  }
+
+  if (hasUrlProtocol(trimmedHref)) {
+    return href
+  }
+
+  const filePath = trimmedHref.replace(/^\.?\//, '')
+
+  return filePath.startsWith('files/')
+    ? `${articleImageBaseUrl}/${filePath}`
+    : href
+}
+
 function getRouteLink(path: string) {
   const normalized = relative(docsDir, path).replace(/\\/g, '/').replace(/\.md$/, '')
 
@@ -153,13 +171,16 @@ function buildSidebar() {
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "丑萌气质狗",
-  description: "简单描述一下博客信息，后面还要进行修改的！",
+  description: "丑萌气质狗CHOUMENGQIZHIGOU.COM-丑萌气质狗的个人博客，努力成为编程知识分享的一股清流，打造一个舒适、自由的个人社区，做好教育、教程的规划，记录个人成长的的所思所想，让自己在后续达到到某一阶段时都有迹可循，可供参考。博客内容范围包括但不限于：编程、知识、教育、教程、心得、感悟。技术包括但不限于:编译原理,操作系统,图形学,C#,CSharp,Unity,.NET,.NET Framework,DotNet,Winform,WPF,Direct3D,C,C++！",
+  cleanUrls: true,
   head: [
+    // favicon
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
   markdown: {
     config(md) {
       const defaultImageRule = md.renderer.rules.image
+      const defaultLinkOpenRule = md.renderer.rules.link_open
 
       md.renderer.rules.image = (tokens, idx, options, env, self) => {
         if (isArticleMarkdown(env)) {
@@ -172,6 +193,21 @@ export default defineConfig({
         }
 
         return defaultImageRule(tokens, idx, options, env, self)
+      }
+
+      md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
+        if (isArticleMarkdown(env)) {
+          const token = tokens[idx]
+          const href = token.attrGet('href')
+
+          if (href) {
+            token.attrSet('href', toArticleFileUrl(href))
+          }
+        }
+
+        return defaultLinkOpenRule
+          ? defaultLinkOpenRule(tokens, idx, options, env, self)
+          : self.renderToken(tokens, idx, options)
       }
     }
   },
@@ -190,9 +226,9 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/choumengqizhigou' }
     ],
 
-    footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2019-present Evan You'
-    }
+    // footer: {
+    //   message: 'Released under the MIT License.',
+    //   copyright: 'Copyright © 2026-present 丑萌气质狗'
+    // }
   }
 })
