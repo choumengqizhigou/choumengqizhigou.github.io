@@ -7,7 +7,8 @@ const docsDir = dirname(dirname(fileURLToPath(import.meta.url)))
 const articlesDir = join(docsDir, 'articles')
 
 // 文章中的本地图片、文件资源在构建时会统一指向这个 R2 域名。
-const articleImageBaseUrl = 'https://pub-e217c4a931aa408baaea98a28d47de0f.r2.dev'
+//const articleImageBaseUrl = 'https://pub-e217c4a931aa408baaea98a28d47de0f.r2.dev'
+const articleImageBaseUrl = 'https://files.choumengqizhigou.com'
 
 // 旧文章里已经写成完整 URL 的 OSS 图片，也会在构建时迁移到 R2。
 const legacyArticleImageHosts = new Set([
