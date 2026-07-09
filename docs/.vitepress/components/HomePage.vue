@@ -66,7 +66,7 @@ const profile = {
         <img class="avatar" src="/avatar.jpg" alt="头像" />
       </div>
       <div class="profile-copy">
-        <p class="profile-description">博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上述方式联系，非常感谢！</p>
+        <p class="profile-description">博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上方菜单中的github和bilibili联系，非常感谢！</p>
         <!-- <p class="profile-description">{{ profile.description }}</p> -->
       </div>
       <!-- <dl class="profile-stats">
@@ -219,7 +219,8 @@ const profile = {
   -webkit-line-clamp: 2;
   margin: 0;
   color: #fff;
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   line-height: 1.4;
   letter-spacing: 0;
   overflow-wrap: break-word;
@@ -244,7 +245,8 @@ const profile = {
   flex: 0 0 auto;
   margin: 0;
   color: var(--vp-c-text-2);
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 1.7;
   overflow-wrap: break-word;
   word-break: normal;

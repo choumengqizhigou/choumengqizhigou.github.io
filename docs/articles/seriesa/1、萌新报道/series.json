@@ -1,23 +1,14 @@
 {
   "零基础入门CSharp": {
-    "title": "零基础入门C#",
-    "summary": "从零开始了解 C# 基础语法、开发工具和第一个项目。",
-    "progress": 100
+    "summary": "从零开始了解 C# 基础语法、开发工具和第一个项目。"
   },
-  "博客搭建手记": {
-    "summary": "记录站点从零到上线的每一步。",
-    "progress": 28
+  "WinForm入门": {
+    "summary": "了解C#的第一个界面开发框架WinForm。"
   },
-  "前端入门碎片": {
-    "summary": "HTML、CSS 和页面结构的基础笔记。",
-    "progress": 36
+  "CSharp+SQLServer数据库": {
+    "summary": "介绍SQLServer数据库安装和使用，并通过C#动态操作数据库。"
   },
-  "开发环境整理": {
-    "summary": "把常用工具和配置归到一处。",
-    "progress": 52
-  },
-  "阅读清单": {
-    "summary": "适合新阶段反复翻看的资料。",
-    "progress": 18
+  "WPF入门": {
+    "summary": "配合XAML界面描述语言，了解C#更加现代化的界面框架。"
   }
 }

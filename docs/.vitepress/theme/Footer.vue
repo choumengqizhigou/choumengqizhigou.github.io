@@ -2,7 +2,7 @@
     <footer class="footer">
 
         <div class="copyright">
-            © 2026 丑萌气质狗.
+            © 2026 <span style="font-weight: bold;">丑萌气质狗.</span>
         </div>
 
         <div class="record">
