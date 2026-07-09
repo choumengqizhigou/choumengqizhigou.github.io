@@ -66,7 +66,8 @@ const profile = {
         <img class="avatar" src="/avatar.jpg" alt="头像" />
       </div>
       <div class="profile-copy">
-        <p class="profile-description">博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上方菜单中的github和bilibili联系，非常感谢！</p>
+        <p class="profile-description">接下来2-3个月什么事情都不做，一定要把所有文章都补充完整。努力完善中。。。</p>
+        <p class="profile-description"> --2026.7.10（发薪日）</p>
         <!-- <p class="profile-description">{{ profile.description }}</p> -->
       </div>
       <!-- <dl class="profile-stats">
