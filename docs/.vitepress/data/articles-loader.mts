@@ -3,20 +3,24 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createContentLoader } from 'vitepress'
 
-// 单篇文章里只允许少量 frontmatter 覆盖展示文案，类别/系列信息来自目录配置。
+// 单篇文章里只允许少量 frontmatter 覆盖展示文案，类别/系列信息来自集合根目录配置。
 interface ArticleFrontmatter {
   title?: string
   summary?: string
 }
 
-// categories.json 目前只维护颜色，类别名称和排序来自文件夹名。
+// categories.json 维护类别 ID、名称和颜色，首页类别排序直接使用 ID。
 interface CategoryMeta {
+  id: number
+  name: string
   color?: string
 }
 
-// series.json 维护系列卡片的展示标题和摘要。
+// series.json 维护系列卡片的展示标题、摘要、所属类别 ID 和排序。
 interface SeriesMeta {
   title?: string
+  categoryId?: number
+  order?: number
   summary?: string
   progress?: number
 }
@@ -56,11 +60,6 @@ function readJson<T>(path: string, fallback: T) {
   return JSON.parse(readFileSync(path, 'utf-8')) as T
 }
 
-// 当目录没有数字前缀时，使用 JSON 配置里的键顺序作为兜底排序。
-function createFallbackOrder(source: Record<string, unknown>) {
-  return new Map(Object.keys(source).map((name, index) => [name, index + 1]))
-}
-
 // 支持 "1、名称"、"1_名称"、"1-名称" 这类前缀排序命名。
 function parseOrderedName(name: string) {
   const match = name.match(/^(\d+)[、._-]\s*(.+)$/)
@@ -71,7 +70,7 @@ function parseOrderedName(name: string) {
   }
 }
 
-// VitePress loader 给的是 URL，这里还原出 collection/category/series/article。
+// VitePress loader 给的是 URL，这里还原出 collection/series/article。
 function getPathParts(url: string) {
   return url.split('/').filter(Boolean).map((part) => decodeURIComponent(part))
 }
@@ -90,6 +89,10 @@ function getFirstParagraph(source = '') {
     .find((line) => line && !line.startsWith('#') && !line.startsWith('```')) ?? ''
 }
 
+function createCategoryMap(categories: CategoryMeta[]) {
+  return new Map(categories.map((category) => [category.id, category]))
+}
+
 // URL 文件名是标题的最后兜底来源。
 function getTitleFromUrl(url: string) {
   return parseOrderedName(getPathParts(url).pop()?.replace(/\.html$/, '') ?? '').name
@@ -103,55 +106,37 @@ function getSeriesUrl(series: Series) {
 // 为指定集合创建 VitePress 数据加载器，例如 seriesa 或 seriesb。
 export function createArticlesLoader(collection: string) {
   const collectionDir = join(dataDir, '../../articles', collection)
-  const categoryMeta = readJson<Record<string, CategoryMeta>>(join(collectionDir, 'categories.json'), {})
-  const categoryFallbackOrder = createFallbackOrder(categoryMeta)
-  const seriesMetaCache = new Map<string, Record<string, SeriesMeta>>()
+  const categories = readJson<CategoryMeta[]>(join(collectionDir, 'categories.json'), [])
+  const categoryById = createCategoryMap(categories)
+  const seriesMeta = readJson<Record<string, SeriesMeta>>(join(collectionDir, 'series.json'), {})
 
-  // series.json 按类别缓存，避免同一个类别下多篇文章重复读取文件。
-  function getSeriesMeta(categoryFolder: string) {
-    const cached = seriesMetaCache.get(categoryFolder)
-    if (cached) return cached
-
-    const meta = readJson<Record<string, SeriesMeta>>(join(collectionDir, categoryFolder, 'series.json'), {})
-    seriesMetaCache.set(categoryFolder, meta)
-
-    return meta
-  }
-
-  return createContentLoader(`articles/${collection}/*/*/*.md`, {
+  return createContentLoader(`articles/${collection}/*/*.md`, {
     includeSrc: true,
     transform(rawArticles) {
       const categoryMap = new Map<string, Category>()
       const seriesMap = new Map<string, Series>()
 
-      // 第一次遍历文章：按目录拆出类别、系列、文章，并先聚合到 Map。
+      // 第一次遍历文章：按目录拆出系列、文章，再通过 series.json 找到所属类别。
       rawArticles.forEach(({ url, frontmatter, src }) => {
         const meta = frontmatter as ArticleFrontmatter
-        const [, , categoryFolder = '未分类', seriesFolder = '未命名系列', articleFile = ''] = getPathParts(url)
-        const parsedCategory = parseOrderedName(categoryFolder)
+        const [, , seriesFolder = '未命名系列', articleFile = ''] = getPathParts(url)
         const parsedSeries = parseOrderedName(seriesFolder)
         const parsedArticle = parseOrderedName(articleFile.replace(/\.html$/, ''))
-        const categoryName = parsedCategory.name
-        const categoryInfo = categoryMeta[categoryName] ?? {}
-        const seriesMeta = getSeriesMeta(categoryFolder)
         const seriesInfo = seriesMeta[parsedSeries.name] ?? {}
+        const categoryInfo = categoryById.get(seriesInfo.categoryId ?? 0)
+        const categoryName = categoryInfo?.name ?? '未分类'
         const category = categoryMap.get(categoryName) ?? {
           name: categoryName,
-          color: categoryInfo.color ?? '#409EFF',
-          order: parsedCategory.order === Number.MAX_SAFE_INTEGER
-            ? categoryFallbackOrder.get(categoryName) ?? parsedCategory.order
-            : parsedCategory.order,
+          color: categoryInfo?.color ?? '#409EFF',
+          order: categoryInfo?.id ?? Number.MAX_SAFE_INTEGER,
           series: []
         }
         const seriesKey = `${categoryName}/${parsedSeries.name}`
-        const seriesFallbackOrder = createFallbackOrder(seriesMeta)
         const series = seriesMap.get(seriesKey) ?? {
           title: seriesInfo.title ?? parsedSeries.name,
           summary: seriesInfo.summary ?? '',
           progress: seriesInfo.progress ?? 0,
-          order: parsedSeries.order === Number.MAX_SAFE_INTEGER
-            ? seriesFallbackOrder.get(parsedSeries.name) ?? parsedSeries.order
-            : parsedSeries.order,
+          order: seriesInfo.order ?? parsedSeries.order,
           url,
           articles: []
         }

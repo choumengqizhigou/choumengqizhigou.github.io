@@ -15,13 +15,17 @@ const legacyArticleImageHosts = new Set([
   'blog-image-group.oss-cn-shanghai.aliyuncs.com'
 ])
 
-// series.json 里只关心系列展示名称；文章列表由文件系统动态扫描生成。
+// series.json 里维护系列展示名称、所属类别和排序；文章列表由文件系统动态扫描生成。
 interface SeriesMeta {
   title?: string
+  categoryId?: number
+  order?: number
 }
 
-// categories.json 里维护类别颜色，类别名称和顺序来自文件夹名。
+// categories.json 里维护类别 ID、名称和颜色；类别排序直接使用 ID。
 interface CategoryMeta {
+  id: number
+  name: string
   color?: string
 }
 
@@ -154,35 +158,37 @@ function getMarkdownFiles(path: string) {
     .sort((a, b) => a.order - b.order)
 }
 
-// 根据 docs/articles/<集合>/<类别>/<系列>/*.md 动态生成文章页左侧菜单。
+function createCategoryMap(categories: CategoryMeta[]) {
+  return new Map(categories.map((category) => [category.id, category]))
+}
+
+// 根据 docs/articles/<集合>/<系列>/*.md 动态生成文章页左侧菜单。
 function buildSidebar() {
   const sidebar: Record<string, { text: string; items: { text: string; link: string }[] }[]> = {}
 
   getDirectories(articlesDir).forEach((collection) => {
-    const categoryMeta = readJson<Record<string, CategoryMeta>>(join(collection.path, 'categories.json'), {})
+    const categories = readJson<CategoryMeta[]>(join(collection.path, 'categories.json'), [])
+    const categoryById = createCategoryMap(categories)
+    const seriesMeta = readJson<Record<string, SeriesMeta>>(join(collection.path, 'series.json'), {})
 
-    getDirectories(collection.path).forEach((category) => {
-      const seriesMeta = readJson<Record<string, SeriesMeta>>(join(category.path, 'series.json'), {})
-      const categoryName = parseOrderedName(category.name).name
-      const categoryColor = categoryMeta[categoryName]?.color ?? '#0078d4'
+    getDirectories(collection.path).forEach((series) => {
+      const seriesInfo = seriesMeta[series.name] ?? {}
+      const categoryColor = categoryById.get(seriesInfo.categoryId ?? 0)?.color ?? '#0078d4'
+      const seriesName = seriesInfo.title ?? series.name
+      const articles = getMarkdownFiles(series.path)
 
-      getDirectories(category.path).forEach((series) => {
-        const seriesName = seriesMeta[series.name]?.title ?? series.name
-        const articles = getMarkdownFiles(series.path)
+      if (!articles.length) return
 
-        if (!articles.length) return
-
-        const seriesRoute = getRouteLink(join(series.path, 'index.md'))
-        sidebar[seriesRoute] = [
-          {
-            text: `<span class="series-sidebar-title" style="--series-color: ${escapeHtml(categoryColor)}">${escapeHtml(seriesName)}</span>`,
-            items: articles.map((article) => ({
-              text: article.displayName,
-              link: getRouteLink(article.path)
-            }))
-          }
-        ]
-      })
+      const seriesRoute = getRouteLink(join(series.path, 'index.md'))
+      sidebar[seriesRoute] = [
+        {
+          text: `<span class="series-sidebar-title" style="--series-color: ${escapeHtml(categoryColor)}">${escapeHtml(seriesName)}</span>`,
+          items: articles.map((article) => ({
+            text: article.displayName,
+            link: getRouteLink(article.path)
+          }))
+        }
+      ]
     })
   })
 
@@ -192,11 +198,34 @@ function buildSidebar() {
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "丑萌气质狗",
-  description: "丑萌气质狗CHOUMENGQIZHIGOU.COM-丑萌气质狗的个人博客，努力成为编程知识分享的一股清流，打造一个舒适、自由的个人社区，做好教育、教程的规划，记录个人成长的的所思所想，让自己在后续达到到某一阶段时都有迹可循，可供参考。博客内容范围包括但不限于：编程、知识、教育、教程、心得、感悟。技术包括但不限于:编译原理,操作系统,图形学,C#,CSharp,Unity,.NET,.NET Framework,DotNet,Winform,WPF,Direct3D,C,C++！",
+  description: "丑萌气质狗的个人博客，记录个人成长的的所思所想（其实就是瞎记），让自己在后续到达到某一阶段时都有迹可循。博客内容范围包括但不限于：编程、知识、教育、教程、心得、感悟。技术领域包括但不限于:编译原理,操作系统,图形学,C#,CSharp,Unity,.NET,.NET Framework,DotNet,Winform,WPF,Direct3D,C,C++！",
   cleanUrls: true,
   head: [
     // favicon
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['script', { type: 'application/ld+json' },
+      JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "丑萌气质狗",
+        "url": "https://choumengqizhigou.com",
+        "description": "丑萌气质狗的个人博客，记录个人成长的的所思所想（其实就是瞎记），让自己在后续到达到某一阶段时都有迹可循。博客内容范围包括但不限于：编程、知识、教育、教程、心得、感悟。技术领域包括但不限于:编译原理,操作系统,图形学,C#,CSharp,Unity,.NET,.NET Framework,DotNet,Winform,WPF,Direct3D,C,C++！"
+      })
+    ],
+    [
+      'meta',
+      {
+        property: 'og:title',
+        content: '丑萌气质狗'
+      }
+    ],
+    [
+      'meta',
+      {
+        property: 'og:site_name',
+        content: '丑萌气质狗'
+      }
+    ]
   ],
   markdown: {
     config(md) {
