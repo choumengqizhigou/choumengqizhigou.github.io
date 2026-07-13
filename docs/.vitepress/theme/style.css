@@ -36,8 +36,18 @@
 }
 
 .VPSidebarItem.level-0>.item .series-sidebar-title {
+  display: block;
   color: var(--series-color);
   font-size: 17px;
   font-weight: 800;
   line-height: 1.45;
+}
+
+.VPSidebarItem.level-0>.item .series-sidebar-date {
+  display: block;
+  margin-top: 2px;
+  color: var(--vp-c-text-3);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
 }

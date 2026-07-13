@@ -50,7 +50,10 @@ const profile = {
               </div>
               <div class="series-card-body">
                 <p class="series-summary" :title="item.summary">{{ item.summary }}</p>
-                <p class="article-count">{{ item.articles.length }} 篇文章</p>
+                <p class="series-meta">
+                  <span>{{ item.articles.length }} 篇文章</span>
+                  <span v-if="item.createdAt">{{ item.createdAt }}</span>
+                </p>
               </div>
             </a>
           </div>
@@ -253,15 +256,25 @@ const profile = {
   word-break: normal;
 }
 
-.series-card .article-count {
-  display: block;
+.series-card .series-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   flex: 0 0 auto;
-  overflow: visible;
+  overflow: hidden;
   margin: 0;
   color: var(--category-color);
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
+}
+
+.series-card .series-meta span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .profile-panel {

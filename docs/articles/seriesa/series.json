@@ -3,30 +3,35 @@
     "title": "零基础入门C#",
     "categoryId": 1,
     "summary": "从零开始了解 C# 基础语法、开发工具和第一个项目。",
-    "order": 1
+    "order": 1,
+    "createdAt": "2025-05-11"
   },
-    "WinForm入门": {
+  "WinForm入门": {
     "title": "WinForm入门",
     "categoryId": 1,
     "summary": "了解C#的第一个界面开发框架WinForm。",
-    "order": 2
+    "order": 2,
+    "createdAt": "2022-07-11"
   },
   "CSharp+SQLServer数据库": {
     "title": "C#+SQLServer数据库",
     "categoryId": 1,
     "summary": "介绍SQLServer数据库安装和使用，并通过C#动态操作数据库。",
-    "order": 3
+    "order": 3,
+    "createdAt": "2024-09-01"
   },
   "WPF入门": {
     "title": "WPF入门",
     "categoryId": 1,
     "summary": "配合XAML界面描述语言，了解C#更加现代化的界面框架。",
-    "order": 4
+    "order": 4,
+    "createdAt": "2023-05-15"
   },
   "WinForm教务系统": {
     "title": "WinForm教务系统",
     "categoryId": 2,
     "summary": "WinForm项目案例-马鞍山师范高等专科学校教务管理系统",
-    "order": 1
+    "order": 1,
+    "createdAt": "2026-04-16"
   }
 }

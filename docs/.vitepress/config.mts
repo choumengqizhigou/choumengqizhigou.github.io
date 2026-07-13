@@ -15,11 +15,12 @@ const legacyArticleImageHosts = new Set([
   'blog-image-group.oss-cn-shanghai.aliyuncs.com'
 ])
 
-// series.json 里维护系列展示名称、所属类别和排序；文章列表由文件系统动态扫描生成。
+// series.json 里维护系列展示名称、所属类别、排序和创建时间；文章列表由文件系统动态扫描生成。
 interface SeriesMeta {
   title?: string
   categoryId?: number
   order?: number
+  createdAt?: string
 }
 
 // categories.json 里维护类别 ID、名称和颜色；类别排序直接使用 ID。
@@ -175,14 +176,20 @@ function buildSidebar() {
       const seriesInfo = seriesMeta[series.name] ?? {}
       const categoryColor = categoryById.get(seriesInfo.categoryId ?? 0)?.color ?? '#0078d4'
       const seriesName = seriesInfo.title ?? series.name
+      const seriesDate = seriesInfo.createdAt
       const articles = getMarkdownFiles(series.path)
 
       if (!articles.length) return
 
+      const titleHtml = [
+        `<span class="series-sidebar-title" style="--series-color: ${escapeHtml(categoryColor)}">${escapeHtml(seriesName)}</span>`,
+        seriesDate ? `<span class="series-sidebar-date">${escapeHtml(seriesDate)}</span>` : ''
+      ].join('')
+
       const seriesRoute = getRouteLink(join(series.path, 'index.md'))
       sidebar[seriesRoute] = [
         {
-          text: `<span class="series-sidebar-title" style="--series-color: ${escapeHtml(categoryColor)}">${escapeHtml(seriesName)}</span>`,
+          text: titleHtml,
           items: articles.map((article) => ({
             text: article.displayName,
             link: getRouteLink(article.path)

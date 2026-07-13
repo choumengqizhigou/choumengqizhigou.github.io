@@ -16,11 +16,12 @@ interface CategoryMeta {
   color?: string
 }
 
-// series.json 维护系列卡片的展示标题、摘要、所属类别 ID 和排序。
+// series.json 维护系列卡片的展示标题、摘要、所属类别 ID、排序和创建时间。
 interface SeriesMeta {
   title?: string
   categoryId?: number
   order?: number
+  createdAt?: string
   summary?: string
   progress?: number
 }
@@ -39,6 +40,7 @@ interface Series {
   summary: string
   progress: number
   order: number
+  createdAt: string
   url: string
   articles: Article[]
 }
@@ -137,6 +139,7 @@ export function createArticlesLoader(collection: string) {
           summary: seriesInfo.summary ?? '',
           progress: seriesInfo.progress ?? 0,
           order: seriesInfo.order ?? parsedSeries.order,
+          createdAt: seriesInfo.createdAt ?? '',
           url,
           articles: []
         }
