@@ -1,26 +1,28 @@
 <script setup lang="ts">
+import type { ArchiveArticle } from '../data/archive-loader.mts'
 import type { Category } from '../data/articles-loader.mts'
 
 const props = withDefaults(defineProps<{
   articles?: Category[]
+  latestArchive?: ArchiveArticle
 }>(), {
   articles: () => []
 })
 
-const profile = {
-  name: '丑萌气质狗',
-  title: '个人博客 / 学习记录',
-  description:
-    '博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上述方式联系，非常感谢！',
-  stats: [
-    { label: '分类', value: props.articles.length },
-    {
-      label: '系列',
-      value: props.articles.reduce((total, category) => total + category.series.length, 0)
-    },
-    { label: '状态', value: '更新中' }
-  ]
-}
+// const profile = {
+//   name: '丑萌气质狗',
+//   title: '个人博客 / 学习记录',
+//   description:
+//     '博客暂时不提供评论功能，如有任何疑问或建议，欢迎通过上述方式联系，非常感谢！',
+//   stats: [
+//     { label: '分类', value: props.articles.length },
+//     {
+//       label: '系列',
+//       value: props.articles.reduce((total, category) => total + category.series.length, 0)
+//     },
+//     { label: '状态', value: '更新中' }
+//   ]
+// }
 </script>
 
 <template>
@@ -31,6 +33,17 @@ const profile = {
         <h1>文章分类与系列进度</h1>
         <p>把学习、实践和复盘拆成可以持续推进的主题，每个系列都留一个清晰的进度位置。</p>
       </div> -->
+
+      <a v-if="props.latestArchive" class="latest-archive" :href="props.latestArchive.url">
+        <span class="latest-archive-title"
+          :style="props.latestArchive.titleColor ? { color: props.latestArchive.titleColor } : undefined">
+          {{ props.latestArchive.title }}
+        </span>
+        <time v-if="props.latestArchive.createdAt" class="latest-archive-date"
+          :datetime="props.latestArchive.createdAt">
+          {{ props.latestArchive.createdAt }}
+        </time>
+      </a>
 
       <div class="category-list">
         <section v-for="category in props.articles" :key="category.name" class="category-block"
@@ -124,6 +137,47 @@ const profile = {
   color: var(--vp-c-text-2);
   font-size: 16px;
   line-height: 1.8;
+}
+
+.latest-archive {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  margin-bottom: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+  color: inherit;
+  text-decoration: none;
+}
+
+.latest-archive:hover {
+  text-decoration: none;
+}
+
+.latest-archive:hover .latest-archive-title {
+  color: var(--vp-c-brand-1);
+}
+
+.latest-archive-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--vp-c-text-1);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.latest-archive-date {
+  flex: 0 0 auto;
+  color: var(--vp-c-text-3);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
 .category-list {

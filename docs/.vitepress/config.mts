@@ -207,6 +207,13 @@ export default defineConfig({
   title: "丑萌气质狗",
   description: "丑萌气质狗的个人博客，记录个人成长的的所思所想（其实就是瞎记），让自己在后续到达到某一阶段时都有迹可循。博客内容范围包括但不限于：编程、知识、教育、教程、心得、感悟。技术领域包括但不限于:编译原理,操作系统,图形学,C#,CSharp,Unity,.NET,.NET Framework,DotNet,Winform,WPF,Direct3D,C,C++！",
   cleanUrls: true,
+  transformPageData(pageData) {
+    if (!pageData.relativePath.startsWith('articles/archive/')) return
+
+    pageData.frontmatter.sidebar = false
+    pageData.frontmatter.aside = false
+    pageData.frontmatter.titleColor = pageData.frontmatter.titleColor
+  },
   head: [
     // favicon
     ['link', { rel: 'icon', href: '/favicon.ico' }],
@@ -275,6 +282,7 @@ export default defineConfig({
     nav: [
       { text: '系列A', link: '/' },
       { text: '系列B', link: '/indexB' },
+      { text: '归档', link: '/archive' },
       // { text: '关于', link: '/about' },
       // { text: 'Examples', link: '/markdown-examples' }
     ],
