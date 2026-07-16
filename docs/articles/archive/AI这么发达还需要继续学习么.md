@@ -1,6 +1,7 @@
 ---
 title: AI这么发达还需要继续学习么
 createdAt: '2026-07-13'
+giscus: 924c8fe2-f350-4169-9b0f-c388ec47a020
 ---
 
 今天浏览 `ChatGPT` 官网的时候看到的。

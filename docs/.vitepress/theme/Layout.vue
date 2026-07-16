@@ -3,6 +3,7 @@ import DefaultTheme from 'vitepress/theme'
 import { computed } from 'vue'
 import { useData } from 'vitepress'
 import Footer from './Footer.vue'
+import Giscus from "./components/Giscus.vue";
 
 const { page, frontmatter } = useData()
 
@@ -24,6 +25,10 @@ const archiveTitleColor = computed(() => String(frontmatter.value.tilteColor ?? 
                 <h1 :style="archiveTitleColor ? { color: archiveTitleColor } : undefined">{{ frontmatter.title }}</h1>
                 <time v-if="archiveCreatedAt" :datetime="archiveCreatedAt">{{ archiveCreatedAt }}</time>
             </header>
+        </template>
+
+        <template #doc-after>
+            <Giscus />
         </template>
 
         <template #layout-bottom>
