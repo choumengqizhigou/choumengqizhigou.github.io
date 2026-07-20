@@ -23,3 +23,9 @@ docs/.vitepress/dist/
 
 # temporary files
 *.local
+
+# blog files
+files/
+
+# blog images
+images/
