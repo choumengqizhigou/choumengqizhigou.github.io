@@ -2,8 +2,6 @@
 giscus: 302f9276-0d67-47ef-a2ff-4d774f14653a
 ---
 
-# 2、[WPF入门]WPF优缺点
-
 ## WPF与WinForm
 
 你好，我是丑萌气质狗。

@@ -77,11 +77,6 @@ function getPathParts(url: string) {
   return url.split('/').filter(Boolean).map((part) => decodeURIComponent(part))
 }
 
-// 文章没有 frontmatter.title 时，优先取第一个一级标题。
-function getTitleFromSource(source = '') {
-  return source.match(/^#\s+(.+)$/m)?.[1]
-}
-
 // 文章没有 frontmatter.summary 时，取正文第一个普通段落作为摘要。
 function getFirstParagraph(source = '') {
   return source
@@ -95,9 +90,9 @@ function createCategoryMap(categories: CategoryMeta[]) {
   return new Map(categories.map((category) => [category.id, category]))
 }
 
-// URL 文件名是标题的最后兜底来源。
+// 文章没有配置 title 时，使用保留序号的完整文件名作为标题。
 function getTitleFromUrl(url: string) {
-  return parseOrderedName(getPathParts(url).pop()?.replace(/\.html$/, '') ?? '').name
+  return getPathParts(url).pop()?.replace(/\.html$/, '') ?? ''
 }
 
 // 系列卡片点击后跳到该系列第一篇文章。
@@ -145,7 +140,7 @@ export function createArticlesLoader(collection: string) {
         }
 
         series.articles.push({
-          title: meta.title ?? getTitleFromSource(src) ?? getTitleFromUrl(url),
+          title: meta.title ?? getTitleFromUrl(url),
           summary: meta.summary ?? getFirstParagraph(src),
           order: parsedArticle.order,
           url

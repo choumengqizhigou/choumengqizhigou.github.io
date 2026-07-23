@@ -143,16 +143,31 @@ function getDirectories(path: string) {
     .sort((a, b) => a.order - b.order)
 }
 
-// 读取当前系列下的 markdown 文件；侧边栏文本使用文件名本身，保留序号。
+// 读取文章 frontmatter 中可选的 title；没有配置时由调用方使用文件名。
+function getArticleTitle(path: string) {
+  const source = readFileSync(path, 'utf-8')
+  const frontmatter = source.match(/^---\s*\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1]
+  const value = frontmatter?.match(/^\s*title\s*:\s*(.*?)\s*$/m)?.[1]?.trim()
+
+  if (!value || value.startsWith('#')) return undefined
+
+  const quote = value[0]
+  return (quote === '"' || quote === "'") && value.at(-1) === quote
+    ? value.slice(1, -1)
+    : value
+}
+
+// 读取当前系列下的 markdown 文件；title 优先，未配置时保留完整文件名和序号。
 function getMarkdownFiles(path: string) {
   return readdirSync(path)
     .filter((name) => name.endsWith('.md'))
     .map((name) => {
       const displayName = name.replace(/\.md$/, '')
+      const articlePath = join(path, name)
 
       return {
-        displayName,
-        path: join(path, name),
+        displayName: getArticleTitle(articlePath) ?? displayName,
+        path: articlePath,
         ...parseOrderedName(displayName)
       }
     })
@@ -208,7 +223,19 @@ export default defineConfig({
   description: "丑萌气质狗的个人博客，记录个人成长的的所思所想（其实就是瞎记），让自己在后续到达到某一阶段时都有迹可循。博客内容范围包括但不限于：编程、知识、教育、教程、心得、感悟。技术领域包括但不限于:编译原理,操作系统,图形学,C#,CSharp,Unity,.NET,.NET Framework,DotNet,Winform,WPF,Direct3D,C,C++！",
   cleanUrls: true,
   transformPageData(pageData) {
-    if (!pageData.relativePath.startsWith('articles/archive/')) return
+    const relativePath = pageData.relativePath.replace(/\\/g, '/')
+    const isSeriesArticle = /^articles\/series[ab]\/.+\.md$/i.test(relativePath)
+
+    // 系列文章统一由页面布局显示标题：frontmatter.title 优先，否则使用完整文件名。
+    if (isSeriesArticle) {
+      const filename = relativePath.split('/').pop()?.replace(/\.md$/, '') ?? ''
+      const title = String(pageData.frontmatter.title ?? filename)
+
+      pageData.frontmatter.title = title
+      pageData.title = title
+    }
+
+    if (!relativePath.startsWith('articles/archive/')) return
 
     pageData.frontmatter.sidebar = false
     pageData.frontmatter.aside = false

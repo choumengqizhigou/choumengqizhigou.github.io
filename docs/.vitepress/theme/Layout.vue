@@ -8,6 +8,7 @@ import Giscus from "./components/Giscus.vue";
 const { page, frontmatter } = useData()
 
 const isArchiveArticle = computed(() => page.value.relativePath.startsWith('articles/archive/'))
+const isSeriesArticle = computed(() => /^articles\/series[ab]\//i.test(page.value.relativePath))
 const archiveCreatedAt = computed(() => {
     const createdAt = frontmatter.value.createdAt
 
@@ -24,6 +25,9 @@ const archiveTitleColor = computed(() => String(frontmatter.value.tilteColor ?? 
             <header v-if="isArchiveArticle" class="archive-article-header">
                 <h1 :style="archiveTitleColor ? { color: archiveTitleColor } : undefined">{{ frontmatter.title }}</h1>
                 <time v-if="archiveCreatedAt" :datetime="archiveCreatedAt">{{ archiveCreatedAt }}</time>
+            </header>
+            <header v-else-if="isSeriesArticle" class="series-article-header">
+                <h1>{{ frontmatter.title }}</h1>
             </header>
         </template>
 
