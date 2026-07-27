@@ -306,6 +306,10 @@ export default defineConfig({
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
+    outline: {
+      level: [2, 3]
+    },
+
     nav: [
       { text: '系列A', link: '/' },
       { text: '系列B', link: '/indexB' },

@@ -4,11 +4,13 @@ import { computed } from 'vue'
 import { useData } from 'vitepress'
 import Footer from './Footer.vue'
 import Giscus from "./components/Giscus.vue";
+import ImageViewer from './components/ImageViewer.vue'
 
 const { page, frontmatter } = useData()
 
 const isArchiveArticle = computed(() => page.value.relativePath.startsWith('articles/archive/'))
 const isSeriesArticle = computed(() => /^articles\/series[ab]\//i.test(page.value.relativePath))
+const isArticle = computed(() => page.value.relativePath.startsWith('articles/'))
 const archiveCreatedAt = computed(() => {
     const createdAt = frontmatter.value.createdAt
 
@@ -37,6 +39,7 @@ const archiveTitleColor = computed(() => String(frontmatter.value.tilteColor ?? 
 
         <template #layout-bottom>
             <Footer />
+            <ImageViewer :enabled="isArticle" />
         </template>
     </DefaultTheme.Layout>
 </template>
