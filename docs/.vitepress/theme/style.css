@@ -90,6 +90,10 @@
 }
 
 .article-image-viewer-enabled .vp-doc img:not(.no-preview) {
+  box-sizing: border-box;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 8%);
   cursor: zoom-in;
 }
 
