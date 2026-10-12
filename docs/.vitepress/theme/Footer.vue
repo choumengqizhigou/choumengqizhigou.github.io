@@ -8,7 +8,7 @@
         <div class="record">
 
             <a href="https://beian.miit.gov.cn/" target="_blank">
-                皖ICP备 16002969号
+                皖ICP备16002969号-2
             </a>
 
             <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=34052302341845" target="_blank">
